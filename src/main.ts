@@ -36,7 +36,15 @@ const mainFunction = async () => {
           await page.goto(ch)
           await page.waitForSelector('.TitleDetailHeader-module_info_1_7BN')
           const author = await page.$eval('.TitleDetailHeader-module_info_1_7BN', el => el.querySelector('p')?.textContent);
-          console.log(`${titles[index]}\n${author}`)
+          const sinopse: string | null = await page.$eval('.TitleDetailHeader-module_overview_32fOi', el => el?.textContent)
+          const cronograma: string | null | undefined = await page.$eval('.TitleDetail-module_updateInfo_2MITq', el => el.querySelector('span')?.textContent)
+          const frequencia: string | null | undefined = await page.$eval('.TitleDetail-module_updateInfo_2MITq', el => el.querySelector('div > p')?.textContent)
+          if(!author || !sinopse || !cronograma || !frequencia){
+              console.log('Houve um erro ao buscar os dados')
+              rl.close()
+              await browser.close()
+          }
+          console.log(`\nTitle: ${titles[index]}\nAuthor: ${author}\n\nSinopse: ${sinopse}\n\nFrequência:\n${frequencia}\n\nProximo lançamento:\n${cronograma}`)
           rl.close()
           await browser.close()
         });
